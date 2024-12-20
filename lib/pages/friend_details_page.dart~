@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+import '../controller/friend_controller.dart';
+import '../models/friend.dart';
+import '../view/friend_details_view.dart';
+
+class FriendDetailsPage extends StatelessWidget {
+  final String phone;
+
+  const FriendDetailsPage({Key? key, required this.phone}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = FriendController();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Friend Details"),
+        backgroundColor: Colors.brown.shade700,
+        foregroundColor: Colors.white,
+      ),
+      body: FutureBuilder<Friend?>(
+        future: controller.getFriendByPhone(phone),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(child: Text("Friend data not found."));
+          }
+
+          return FriendDetailsView(friend: snapshot.data!);
+        },
+      ),
+    );
+  }
+}
